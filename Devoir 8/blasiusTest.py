@@ -23,7 +23,7 @@ def f(u):
 
 def essai(alpha, h, integrator):
   X, U = integrator(0, [0,0,alpha], 5, h, f)
-  return U[1][-1]-1
+  return 1 - U[-1][1]
 
 def blasius(delta,nmax,tol,h,integrator):
 
@@ -36,23 +36,25 @@ def blasius(delta,nmax,tol,h,integrator):
   evaluation_d = essai(borne_d, h, integrator)
   if evaluation_d * evaluation_g > 0:
     return 0, messageBadInterval
-  middle = (delta[1] - delta[0]) / 2
+  middle = borne_g + (delta[1] - delta[0]) / 2
   result = essai(middle, h, integrator)
-  if abs(result) < tol:
+  if abs(middle) < tol:
     return middle, messageGoodJob
   
   for i in range(nmax):
-    if evaluation_g * middle < 0:
-      evaluation_d = middle
-      middle = (evaluation_d - evaluation_g) / 2
+    if evaluation_g * result < 0:
+      evaluation_d = result
+      borne_d = middle
+      middle = borne_g + (borne_d - borne_g) / 2
       result = essai(middle, h, integrator)
-      if abs(result) < tol:
+      if abs(middle) < tol:
         return middle, messageGoodJob
     else:
-      evaluation_g = middle
-      middle = (evaluation_d - evaluation_g) / 2
+      evaluation_g = result
+      borne_g = middle
+      middle = borne_g + (borne_d - borne_g) / 2
       result = essai(middle, h, integrator)
-      if abs(result) < tol:
+      if abs(middle) < tol:
         return middle, messageGoodJob
 
   return middle, messageMoreIterations
