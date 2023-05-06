@@ -14,30 +14,48 @@ from numpy import *
 
 # ============================================================
 # FONCTIONS A MODIFIER [begin]
-#  A titre d'exemple, on considère ici le système suivant !
-#
-#           dudt(t) =  u(t)
-#           dvdt(t) =  0.001 * w(t)
-#           dwdt(t) =  w(t) 
-#
 
 def f(u):
-  dudt =   u[0]
-  dvdt =   0.001 * u[2] 
-  dwdt =   u[2]  
-  return array([dudt,dvdt,dwdt])
-  
-#
-# Les trois diagnostics sont fournis :-)
-#  
-  
+  df = u[1]
+  ddf = u[2]
+  dddf = -u[0] * u[2]     
+  return array([df,ddf,dddf])
+
+def essai(alpha, h, integrator):
+  X, U = integrator(0, [0,0,alpha], 5, h, f)
+  return U[1][-1]-1
+
 def blasius(delta,nmax,tol,h,integrator):
 
   messageBadInterval = 'Bad initial interval :-('
   messageMoreIterations = 'Increase nmax : more iterations are needed :-('
   messageGoodJob = 'Convergence observed :-)'
-  x = 3.14
-  return x,messageGoodJob
+  borne_g = delta[0]
+  borne_d = delta[1]
+  evaluation_g = essai(borne_g, h, integrator)
+  evaluation_d = essai(borne_d, h, integrator)
+  if evaluation_d * evaluation_g > 0:
+    return 0, messageBadInterval
+  middle = (delta[1] - delta[0]) / 2
+  result = essai(middle, h, integrator)
+  if abs(result) < tol:
+    return middle, messageGoodJob
+  
+  for i in range(nmax):
+    if evaluation_g * middle < 0:
+      evaluation_d = middle
+      middle = (evaluation_d - evaluation_g) / 2
+      result = essai(middle, h, integrator)
+      if abs(result) < tol:
+        return middle, messageGoodJob
+    else:
+      evaluation_g = middle
+      middle = (evaluation_d - evaluation_g) / 2
+      result = essai(middle, h, integrator)
+      if abs(result) < tol:
+        return middle, messageGoodJob
+
+  return middle, messageMoreIterations
 
 #
 # FONCTIONS A MODIFIER [end]
