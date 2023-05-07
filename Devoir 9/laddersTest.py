@@ -24,7 +24,7 @@ def df(data, x):
   [2 * x[0] * data[1]**2 - 2 * x[0] * x[1]**2 - 6 * x[1] * x[0]**2 - 4 * x[0]**3 - 2 * x[0] * data[2]**2 - 2 * x[1] * data[2]**2, -2 * x[1] * x[0]**2 - 2 * x[0]**3 - 2 * x[0] * data[2]**2 - 2 * x[1] * data[2]**2]]
 
 def laddersIterate(geometry,x):
-  return [x[0] - f(geometry, x)[0]/norm([df(geometry, x)[0][0], df(geometry,x)[0][1]]), x[1] - f(geometry, x)[1]/norm([df(geometry, x)[1][0], df(geometry,x)[1][1]])]
+  return x - solve(df(geometry, x),f(geometry, x))
 
 # ============================================================
   
