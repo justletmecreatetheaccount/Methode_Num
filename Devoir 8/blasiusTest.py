@@ -36,25 +36,28 @@ def blasius(delta,nmax,tol,h,integrator):
   evaluation_d = essai(borne_d, h, integrator)
   if evaluation_d * evaluation_g > 0:
     return 0, messageBadInterval
-  middle = borne_g + (delta[1] - delta[0]) / 2
+  middle = (delta[1] + delta[0]) / 2
   result = essai(middle, h, integrator)
-  if abs(middle) < tol:
+  error = (delta[1] - delta[0]) / 2
+  if abs(error) < tol:
     return middle, messageGoodJob
   
   for i in range(nmax):
     if evaluation_g * result < 0:
       evaluation_d = result
       borne_d = middle
-      middle = borne_g + (borne_d - borne_g) / 2
+      middle = (borne_d + borne_g) / 2
+      error = (borne_d - borne_g) / 2
       result = essai(middle, h, integrator)
-      if abs(middle) < tol:
+      if abs(error) < tol:
         return middle, messageGoodJob
     else:
       evaluation_g = result
       borne_g = middle
-      middle = borne_g + (borne_d - borne_g) / 2
+      middle = (borne_d + borne_g) / 2
       result = essai(middle, h, integrator)
-      if abs(middle) < tol:
+      error = (borne_d - borne_g) / 2
+      if abs(error) < tol:
         return middle, messageGoodJob
 
   return middle, messageMoreIterations
