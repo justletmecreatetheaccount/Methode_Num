@@ -11,11 +11,6 @@
 
 from scipy.linalg import norm,solve
 
-# ============================================================
-# FONCTIONS A MODIFIER [begin]
-#
-# xn+1 = xn + fxn/dfxn
-
 def f(data, x):
   return [(data[0]**2 - (x[0] + x[1])**2) * x[1]**2 - data[2]**2 * (x[0] + x[1])**2, (data[1]**2 - (x[0] + x[1])**2) * x[0]**2 - data[2]**2 * (x[0] + x[1])**2]
   
@@ -26,7 +21,6 @@ def df(data, x):
 def laddersIterate(geometry,x):
   return x - solve(df(geometry, x),f(geometry, x))
 
-# ============================================================
   
 def laddersSolve(geometry,tol,nmax):
   a = geometry[0]
